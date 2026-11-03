@@ -7,7 +7,25 @@ A small patient-facing web app that helps a non-technical reader understand the 
 ## Project overview
 
 - All 26 procedures across 9 categories from the reference guide, shown with their approximate effective dose (mSv) and comparable natural background radiation.
+- **Dose levels.** Each procedure has a plain-English label (Very low / Low / Moderate / Higher) with a key explaining what each means. See [Dose levels](#dose-levels).
 - _TODO: describe search / filtering / comparison features as they land._
+
+## Dose levels
+
+The levels are **this app's interpretation, not part of the source data**. They're there so readers can see where a procedure sits without having to interpret mSv. The thresholds are based on the guide's own comparison column, which implies about 3 mSv per year of natural background radiation:
+
+| Level | Dose (mSv) | Roughly equal to |
+|---|---|---|
+| Very low | < 0.1 | less than ~2 weeks of background |
+| Low | 0.1 – < 3 | less than ~1 year of background |
+| Moderate | 3 – < 10 | ~1–3 years of background |
+| Higher | ≥ 10 | more than ~3 years of background |
+
+Design notes:
+- Every colour is shown alongside a text label, so the levels don't rely on colour vision.
+- The palette is deliberately calm (green, blue, amber, orange) with no red. This is a patient-facing page, and a "danger" signal could cause unnecessary worry about a recommended scan.
+- The UI says the levels compare procedures with each other and are not a measure of risk.
+- The thresholds are defined once in `DOSE_BANDS` / `getDoseBand()` in `src/data/procedures.ts`, so every view uses the same bands.
 
 ## Technology choices
 

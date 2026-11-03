@@ -1,17 +1,27 @@
-import { Disclaimer } from './components/Disclaimer'
-import { CATEGORIES, PROCEDURES, formatDose } from './data/procedures'
+import { Chips } from "./components/Chips";
+import { Disclaimer } from "./components/Disclaimer";
+import { DoseBadge, DoseBandKey } from "./components/DoseBadge";
+import {
+  CATEGORIES,
+  PROCEDURES,
+  formatDose,
+  getDoseBand,
+} from "./data/procedures";
 
 function App() {
   return (
     <>
-      <Disclaimer />
       <header className="page-header">
         <h1>Radiation Dose Guide</h1>
         <p>
-          Approximate effective radiation dose for common imaging procedures, and how long it
-          would take to receive the same dose from natural background radiation.
+          Effective dose is measured in millisieverts (mSv) and is used to
+          estimate the overall impact of radiation exposure on the body.
         </p>
       </header>
+
+      <Chips />
+
+      <DoseBandKey />
 
       <main>
         {CATEGORIES.map((category) => (
@@ -23,14 +33,20 @@ function App() {
                   <th scope="col">Procedure</th>
                   <th scope="col">Approx. dose</th>
                   <th scope="col">Same as natural background</th>
+                  <th scope="col">Level</th>
                 </tr>
               </thead>
               <tbody>
                 {PROCEDURES.filter((p) => p.category === category).map((p) => (
                   <tr key={p.id}>
                     <th scope="row">{p.name}</th>
-                    <td>{formatDose(p)}</td>
-                    <td>{p.backgroundEquivalent}</td>
+                    <td data-label="Approx. dose">{formatDose(p)}</td>
+                    <td data-label="Same as background">
+                      {p.backgroundEquivalent}
+                    </td>
+                    <td data-label="Level">
+                      <DoseBadge band={getDoseBand(p.doseMsv)} />
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -41,13 +57,13 @@ function App() {
 
       <footer className="page-footer">
         <p>
-          Actual radiation doses may vary depending on patient size, imaging equipment, and
-          examination protocols.
+          Actual radiation doses may vary depending on patient size, imaging
+          equipment, and examination protocols.
         </p>
         <Disclaimer />
       </footer>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

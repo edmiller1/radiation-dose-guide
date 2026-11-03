@@ -1,14 +1,37 @@
+import { useState } from "react";
 import { Chips } from "./components/Chips";
 import { Disclaimer } from "./components/Disclaimer";
 import { DoseBadge, DoseBandKey } from "./components/DoseBadge";
+import { DoseExplainer } from "./components/DoseExplainer";
+import { SearchBar } from "./components/SearchBar";
 import {
   CATEGORIES,
   PROCEDURES,
   formatDose,
   getDoseBand,
+  type Category,
 } from "./data/procedures";
+import { matchesSearch } from "./data/search";
 
 function App() {
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState<Category | null>(null);
+
+  const results = PROCEDURES.filter(
+    (p) =>
+      (category === null || p.category === category) &&
+      (query.trim() === "" || matchesSearch(p, query)),
+  );
+  const visibleCategories = CATEGORIES.filter((c) =>
+    results.some((p) => p.category === c),
+  );
+  const isFiltered = query.trim() !== "" || category !== null;
+
+  const clearFilters = () => {
+    setQuery("");
+    setCategory(null);
+  };
+
   return (
     <>
       <header className="page-header">
@@ -19,14 +42,42 @@ function App() {
         </p>
       </header>
 
-      <Chips />
+      <DoseExplainer />
 
       <DoseBandKey />
 
+      <div className="filters">
+        <SearchBar value={query} onChange={setQuery} />
+        <Chips selected={category} onSelect={setCategory} />
+        <div className="result-summary">
+          <p aria-live="polite">
+            Showing {results.length} of {PROCEDURES.length} procedures
+          </p>
+          {isFiltered && (
+            <button type="button" className="link-button" onClick={clearFilters}>
+              Clear filters
+            </button>
+          )}
+        </div>
+      </div>
+
       <main>
-        {CATEGORIES.map((category) => (
-          <section key={category} aria-labelledby={`h-${category}`}>
-            <h2 id={`h-${category}`}>{category}</h2>
+        {results.length === 0 && (
+          <div className="empty-state">
+            <p>
+              No procedures match
+              {query.trim() && <> “{query.trim()}”</>}
+              {category && <> in {category}</>}.
+            </p>
+            <button type="button" className="link-button" onClick={clearFilters}>
+              Clear filters
+            </button>
+          </div>
+        )}
+
+        {visibleCategories.map((c) => (
+          <section key={c} aria-labelledby={`h-${c}`}>
+            <h2 id={`h-${c}`}>{c}</h2>
             <table>
               <thead>
                 <tr>
@@ -37,18 +88,20 @@ function App() {
                 </tr>
               </thead>
               <tbody>
-                {PROCEDURES.filter((p) => p.category === category).map((p) => (
-                  <tr key={p.id}>
-                    <th scope="row">{p.name}</th>
-                    <td data-label="Approx. dose">{formatDose(p)}</td>
-                    <td data-label="Same as background">
-                      {p.backgroundEquivalent}
-                    </td>
-                    <td data-label="Level">
-                      <DoseBadge band={getDoseBand(p.doseMsv)} />
-                    </td>
-                  </tr>
-                ))}
+                {results
+                  .filter((p) => p.category === c)
+                  .map((p) => (
+                    <tr key={p.id}>
+                      <th scope="row">{p.name}</th>
+                      <td data-label="Approx. dose">{formatDose(p)}</td>
+                      <td data-label="Same as background">
+                        {p.backgroundEquivalent}
+                      </td>
+                      <td data-label="Level">
+                        <DoseBadge band={getDoseBand(p.doseMsv)} />
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </section>

@@ -14,7 +14,6 @@
 ## Assumptions
 
 - The audience is a general patient, not a clinician, so plain language was the main priority for content in the application.
-- _TODO_
 
 ## What worked well
 

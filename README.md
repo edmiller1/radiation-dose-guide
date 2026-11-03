@@ -8,7 +8,6 @@ A small patient-facing web app that helps a non-technical reader understand the 
 
 - All 26 procedures across 9 categories from the reference guide, shown with their approximate effective dose (mSv) and comparable natural background radiation.
 - **Dose levels.** Each procedure has a plain-English label (Very low / Low / Moderate / Higher) with a key explaining what each means. See [Dose levels](#dose-levels).
-- _TODO: describe search / filtering / comparison features as they land._
 - **mSV** The first section includes a collapsible "What is a millisievert (mSv)?" This was included to allow for non technical users to have context to the values they will see in the tables below.
 - **Dose levels Explainer** Added a millisievert explainer by converting the values to levels based on the intensity of the values. The levels include very low, low, moderate, and higher. This was implmented to give non-technical users a more quicker understanding of the level of radiation that precedures can give.
 - **Search** The web application allows for searching across procedures. The search filters the procedure table and works alongside the chip filters by only searching what has been currently filtered.
